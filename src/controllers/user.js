@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const moment = require('moment');
 const db = require('../modals');
 const User = db.User;
 require('dotenv').config();
@@ -224,3 +225,49 @@ module.exports.verifyToken = async function (req, res) {
   }
 };
 
+
+module.exports.storeProcedure = (req, res) => {
+  const {
+    id = "",
+    query_type = "",
+    item_name = "",
+    item_cost = 0,
+    date_of_collection = "",
+    invoice = "",
+    name_of_collector = "",
+    name_of_giver = "",
+    in_qty = 0,
+    out_qty = 0,
+    date = moment().format("YYYY-MM-DD"), 
+  } = req.body;
+
+  console.log("Received date:", date);
+
+  db.sequelize
+    .query(
+      "CALL store_procedure(:id, :query_type, :item_name, :item_cost, :date_of_collection, :invoice, :name_of_collector, :name_of_giver, :in_qty, :out_qty, :date)",
+      {
+        replacements: {
+          id,
+          query_type,
+          item_name,
+          item_cost,
+          date_of_collection,
+          invoice,
+          name_of_collector,
+          name_of_giver,
+          in_qty,
+          out_qty,
+          date,
+        },
+      }
+    )
+    .then((results) => {
+      req.results = results;
+      res.json({ success: true, results }); 
+    })
+    .catch((err) => {
+      console.error("Error executing procedure:", err);
+      res.status(500).json({ error: "Database error", details: err });
+    });
+};

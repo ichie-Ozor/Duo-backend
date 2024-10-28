@@ -2,7 +2,7 @@ const passport = require('passport');
 const config = require('../config/config');
 const { allowOnly } = require('../services/routesHelper');
 const { create, login, findAllUsers,
-  findById, update, deleteUser, verifyToken
+  findById, update, deleteUser, verifyToken, storeProcedure
 } = require('../controllers/user');
 
 module.exports = (app) => {
@@ -53,5 +53,9 @@ module.exports = (app) => {
     "/verify-token",
     passport.authenticate("jwt", { session: false }),
     verifyToken
+  );
+
+  app.post(
+    '/stores', storeProcedure
   );
 };
