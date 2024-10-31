@@ -228,10 +228,12 @@ module.exports.verifyToken = async function (req, res) {
 
 module.exports.storeProcedure = (req, res) => {
   const {
-    id = "",
+    id = 0,
     query_type = "",
     item_name = "",
-    item_cost = 0,
+    output_item_name = "",
+    destination = "",
+    item_cost = "",
     date_of_collection = "",
     invoice = "",
     name_of_collector = "",
@@ -239,18 +241,60 @@ module.exports.storeProcedure = (req, res) => {
     in_qty = 0,
     out_qty = 0,
     date = moment().format("YYYY-MM-DD"), 
+    vibe_user_name = "",
+    vibe_item_name = "",
+    vibe_item_price = "",
+    vibe_item_qty = 0,
+    vip_user_name = "",
+    vip_item_name = "",
+    vip_item_price = "",
+    vip_item_qty = 0,
+    kitchen_user_name = "",
+    kitchen_item_name = "",
+    kitchen_item_price = "",
+    kitchen_item_qty = 0,
+    status = ""
   } = req.body;
 
   console.log("Received date:", date);
 
   db.sequelize
     .query(
-      "CALL store_procedure(:id, :query_type, :item_name, :item_cost, :date_of_collection, :invoice, :name_of_collector, :name_of_giver, :in_qty, :out_qty, :date)",
+      `CALL store_procedure(
+        :id,
+        :query_type,
+        :item_name,
+        :output_item_name,
+        :destination,
+        :item_cost,
+        :date_of_collection,
+        :invoice,
+        :name_of_collector,
+        :name_of_giver,
+        :in_qty,
+        :out_qty,
+        :date,
+        :vibe_user_name,
+        :vibe_item_name,
+        :vibe_item_price,
+        :vibe_item_qty,
+        :vip_user_name,
+        :vip_item_name,
+        :vip_item_price,
+        :vip_item_qty,
+        :kitchen_user_name,
+        :kitchen_item_name,
+        :kitchen_item_price,
+        :kitchen_item_qty,
+        :status
+      )`,
       {
         replacements: {
           id,
           query_type,
           item_name,
+          output_item_name,
+          destination,
           item_cost,
           date_of_collection,
           invoice,
@@ -259,6 +303,19 @@ module.exports.storeProcedure = (req, res) => {
           in_qty,
           out_qty,
           date,
+          vibe_user_name,
+          vibe_item_name,
+          vibe_item_price,
+          vibe_item_qty,
+          vip_user_name,
+          vip_item_name,
+          vip_item_price,
+          vip_item_qty,
+          kitchen_user_name,
+          kitchen_item_name,
+          kitchen_item_price,
+          kitchen_item_qty,
+          status
         },
       }
     )
@@ -271,3 +328,99 @@ module.exports.storeProcedure = (req, res) => {
       res.status(500).json({ error: "Database error", details: err });
     });
 };
+
+module.exports.getInStock = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM in_stock", { type: db.Sequelize.QueryTypes.SELECT })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err
+      });
+    });
+};
+
+module.exports.getKitcheen = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM kitchen_table", { type: db.Sequelize.QueryTypes.SELECT })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err
+      });
+    });
+};
+
+module.exports.getOutstock = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM outstock_table", { type: db.Sequelize.QueryTypes.SELECT })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err
+      });
+    });
+};
+
+module.exports.getVibe = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM vibe_table", { type: db.Sequelize.QueryTypes.SELECT })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err
+      });
+    });
+};
+
+module.exports.getVip = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM vip_table", { type: db.Sequelize.QueryTypes.SELECT })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err
+      });
+    });
+};
+

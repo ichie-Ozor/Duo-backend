@@ -2,7 +2,11 @@ const passport = require('passport');
 const config = require('../config/config');
 const { allowOnly } = require('../services/routesHelper');
 const { create, login, findAllUsers,
-  findById, update, deleteUser, verifyToken, storeProcedure
+  findById, update, deleteUser, verifyToken, storeProcedure, getInStock,
+  getVip,
+  getVibe,
+  getOutstock,
+  getKitcheen,
 } = require('../controllers/user');
 
 module.exports = (app) => {
@@ -54,8 +58,27 @@ module.exports = (app) => {
     passport.authenticate("jwt", { session: false }),
     verifyToken
   );
-
+  
   app.post(
     '/stores', storeProcedure
+  );
+  app.get(
+    '/get/stock', getInStock
+  );
+
+  app.get(
+    '/get/kitcheen', getKitcheen
+  );
+
+  app.get(
+    '/get/outstocks', getOutstock
+  );
+
+  app.get(
+    '/get/vibe', getVibe
+  );
+
+  app.get(
+    '/get/vip', getVip
   );
 };
