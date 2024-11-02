@@ -424,3 +424,81 @@ module.exports.getVip = (req, res) => {
     });
 };
 
+module.exports.insertMenu = (req, res) => {
+  const {
+    menu_name = "",
+    menu_price = ""
+  } = req.body;
+
+  db.sequelize
+    .query(
+      `CALL menu_ingredient(
+        :query_type,
+        :menu_name,
+        :menu_price,
+        null
+      )`,
+      {
+        replacements: {
+          query_type: "insert_menu",
+          menu_name,
+          menu_price
+        },
+      }
+    )
+    .then((results) => {
+      res.json({ success: true, message: "Menu item inserted successfully", results });
+    })
+    .catch((err) => {
+      console.error("Error inserting menu:", err);
+      res.status(500).json({ error: "Database error", details: err });
+    });
+};
+
+module.exports.insertIngredient = (req, res) => {
+  const {
+    menu_name = "",
+    menu_ingredients = ""
+  } = req.body;
+
+  db.sequelize
+    .query(
+      `CALL menu_ingredient(
+        :query_type,
+        :menu_name,
+        null,
+        :menu_ingredients
+      )`,
+      {
+        replacements: {
+          query_type: "insert_ingredient",
+          menu_name,
+          menu_ingredients
+        },
+      }
+    )
+    .then((results) => {
+      res.json({ success: true, message: "Ingredients inserted successfully", results });
+    })
+    .catch((err) => {
+      console.error("Error inserting ingredients:", err);
+      res.status(500).json({ error: "Database error", details: err });
+    });
+};
+
+
+
+// module.exports.insertMenu = (req, res) => {
+//   const { menu_name, menu_price } = req.body;
+//   db.sequelize
+//     .query(
+//     `INSERT INTO menu_table (menu_name, menu_price) VALUES ('${menu_name}', '${menu_price}')`
+//     )
+//     .then((results) => {
+//       res.status(200).json({ message: 'Menu item inserted successfully' });
+//     })
+//     .catch((err) => {
+//       console.error("Error inserting menu item:", err);
+//       res.status(500).json({ message: 'Error inserting menu item', error: err });
+//     });
+// }

@@ -7,6 +7,8 @@ const { create, login, findAllUsers,
   getVibe,
   getOutstock,
   getKitcheen,
+  insertIngredient,
+  insertMenu,
 } = require('../controllers/user');
 
 module.exports = (app) => {
@@ -80,5 +82,13 @@ module.exports = (app) => {
 
   app.get(
     '/get/vip', getVip
+  );
+
+  app.post(
+    '/insert-menu', insertMenu
+  );
+
+  app.post(
+    '/insert-ingredient', insertIngredient
   );
 };
