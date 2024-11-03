@@ -262,7 +262,6 @@ module.exports.storeProcedure = (req, res) => {
   db.sequelize
     .query(
       `CALL store_procedure(
-        :id,
         :query_type,
         :item_name,
         :output_item_name,
