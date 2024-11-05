@@ -229,7 +229,7 @@ module.exports.verifyToken = async function (req, res) {
 module.exports.storeProcedure = (req, res) => {
   const {
     id = 0,
-    query_type = "",
+    // query_type = "",
     item_name = "",
     output_item_name = "",
     destination = "",
@@ -255,13 +255,13 @@ module.exports.storeProcedure = (req, res) => {
     kitchen_item_qty = 0,
     status = ""
   } = req.body;
+  const {  query_type = "" } =req.query 
 
   console.log("Received date:", date);
 
   db.sequelize
     .query(
       `CALL store_procedure(
-        :id,
         :query_type,
         :item_name,
         :output_item_name,
@@ -290,7 +290,6 @@ module.exports.storeProcedure = (req, res) => {
       )`,
       {
         replacements: {
-          id,
           query_type,
           item_name,
           output_item_name,
