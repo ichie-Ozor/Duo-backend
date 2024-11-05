@@ -53,7 +53,7 @@ module.exports.create = (req, res) => {
           newUser.password = hash;
           User.create(newUser)
             .then(user => {
-              res.json({ user });
+              res.json({success:true, message:'User Created Successfuly' });
             })
             .catch(err => {
               res.status(500).json({ err });
@@ -484,35 +484,57 @@ module.exports.insertIngredient = (req, res) => {
       res.status(500).json({ error: "Database error", details: err });
     });
 };
+module.exports.getMenu = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM menu_list", {
+      type: db.Sequelize.QueryTypes.SELECT,
+    })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err,
+      });
+    });
+};
 
 
 module.exports.insertVibe = (req, res) => {
   const {
-    vibe_id,
-    selected_menu = "",
-    price = null,
-    vibe_qty = null,
-    method = "",
-    vibe_discount = ""
+    menu = "",
+    item_price = null,
+    out_qty = null,
+    payment_method = "",
+    discount = "",
   } = req.body;
 
   db.sequelize
     .query(
-      `INSERT INTO new_vibe_table (vibe_id, selected_menu, price, vibe_qty, method, vibe_discount)
-       VALUES (:vibe_id, :selected_menu, :price, :vibe_qty, :method, :vibe_discount)`,
+      `INSERT INTO new_vibe_table ( menu, item_price, out_qty, payment_method, vibe_discount)
+       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount)`,
       {
         replacements: {
-          vibe_id,
-          selected_menu,
-          price,
-          vibe_qty,
-          method,
-          vibe_discount
+          menu,
+          item_price,
+          out_qty,
+          payment_method,
+          discount,
         },
       }
     )
     .then((results) => {
-      res.json({ success: true, message: "Vibe inserted successfully", results });
+      res.json({
+        success: true,
+        message: "Vibe inserted successfully",
+        results,
+      });
     })
     .catch((err) => {
       console.error("Error inserting vibe:", err);
@@ -523,26 +545,24 @@ module.exports.insertVibe = (req, res) => {
 
 module.exports.insertVip = (req, res) => {
   const {
-    new_vip_id,
-    vip_selected_menu = "",
-    vip_price = null,
-    vip_qty = null,
-    method_of_payment = "",
-    vip_discount = ""
+    menu = "",
+    item_price = null,
+    out_qty = null,
+    payment_method = "",
+    discount = ""
   } = req.body;
 
   db.sequelize
     .query(
-      `INSERT INTO new_vip_table (new_vip_id, vip_selected_menu, vip_price, vip_qty, method_of_payment, vip_discount)
-       VALUES (:new_vip_id, :vip_selected_menu, :vip_price, :vip_qty, :method_of_payment, :vip_discount)`,
+      `INSERT INTO new_vip_table ( menu, item_price, out_qty, payment_method, vip_discount)
+       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount)`,
       {
         replacements: {
-          new_vip_id: null  || new_vip_id,
-          vip_selected_menu,
-          vip_price,
-          vip_qty,
-          method_of_payment,
-          vip_discount
+          menu,
+          item_price,
+          out_qty,
+          payment_method,
+          discount
         },
       }
     )
@@ -555,6 +575,44 @@ module.exports.insertVip = (req, res) => {
     });
 };
 
+module.exports.getOutVip = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM new_vip_table", { type: db.Sequelize.QueryTypes.SELECT })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err,
+      });
+    });
+};
+module.exports.getOutVibe = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM new_vibe_table", {
+      type: db.Sequelize.QueryTypes.SELECT,
+    })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err,
+      });
+    });
+};
 
 
 

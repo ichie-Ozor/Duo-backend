@@ -11,6 +11,9 @@ const { create, login, findAllUsers,
   insertMenu,
   insertVibe,
   insertVip,
+  getOutVip,
+  getOutVibe,
+  getMenu,
 } = require('../controllers/user');
 
 module.exports = (app) => {
@@ -101,4 +104,7 @@ module.exports = (app) => {
   app.post(
     '/insert-vip', insertVip
   );
+   app.get("/get/out-vip", getOutVip);
+   app.get("/get/out-vibe", getOutVibe);
+   app.get("/get/menu", getMenu);
 };
