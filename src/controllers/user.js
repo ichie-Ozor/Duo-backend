@@ -487,6 +487,87 @@ module.exports.insertIngredient = (req, res) => {
 };
 
 
+module.exports.insertVibe = (req, res) => {
+  const {
+    vibe_id,
+    selected_menu = "",
+    price = null,
+    vibe_qty = null,
+    method = "",
+    vibe_discount = ""
+  } = req.body;
+
+  db.sequelize
+    .query(
+      `INSERT INTO new_vibe_table (vibe_id, selected_menu, price, vibe_qty, method, vibe_discount)
+       VALUES (:vibe_id, :selected_menu, :price, :vibe_qty, :method, :vibe_discount)`,
+      {
+        replacements: {
+          vibe_id,
+          selected_menu,
+          price,
+          vibe_qty,
+          method,
+          vibe_discount
+        },
+      }
+    )
+    .then((results) => {
+      res.json({ success: true, message: "Vibe inserted successfully", results });
+    })
+    .catch((err) => {
+      console.error("Error inserting vibe:", err);
+      res.status(500).json({ error: "Database error", details: err });
+    });
+};
+
+
+module.exports.insertVip = (req, res) => {
+  const {
+    new_vip_id,
+    vip_selected_menu = "",
+    vip_price = null,
+    vip_qty = null,
+    method_of_payment = "",
+    vip_discount = ""
+  } = req.body;
+
+  db.sequelize
+    .query(
+      `INSERT INTO new_vip_table (new_vip_id, vip_selected_menu, vip_price, vip_qty, method_of_payment, vip_discount)
+       VALUES (:new_vip_id, :vip_selected_menu, :vip_price, :vip_qty, :method_of_payment, :vip_discount)`,
+      {
+        replacements: {
+          new_vip_id: null  || new_vip_id,
+          vip_selected_menu,
+          vip_price,
+          vip_qty,
+          method_of_payment,
+          vip_discount
+        },
+      }
+    )
+    .then((results) => {
+      res.json({ success: true, message: "VIP record inserted successfully", results });
+    })
+    .catch((err) => {
+      console.error("Error inserting VIP record:", err);
+      res.status(500).json({ error: "Database error", details: err });
+    });
+};
+
+
+
+
+// {
+//   "new_vip_id": 1,
+//   "vip_selected_menu": "Deluxe Package",
+//   "vip_price": 150,
+//   "vip_qty": 2,
+//   "method_of_payment": "Credit Card",
+//   "vip_discount": "10%"
+// }
+
 
 // module.exports.insertMenu = (req, res) => {
 //   const { menu_name, menu_price } = req.body;

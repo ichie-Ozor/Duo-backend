@@ -9,6 +9,8 @@ const { create, login, findAllUsers,
   getKitcheen,
   insertIngredient,
   insertMenu,
+  insertVibe,
+  insertVip,
 } = require('../controllers/user');
 
 module.exports = (app) => {
@@ -90,5 +92,13 @@ module.exports = (app) => {
 
   app.post(
     '/insert-ingredient', insertIngredient
+  );
+
+  app.post(
+    '/insert-vibe', insertVibe
+  );
+
+  app.post(
+    '/insert-vip', insertVip
   );
 };
