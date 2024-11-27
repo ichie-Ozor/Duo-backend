@@ -53,7 +53,7 @@ module.exports.create = (req, res) => {
           newUser.password = hash;
           User.create(newUser)
             .then(user => {
-              res.json({success:true, message:'User Created Successfuly' });
+              res.json({ success: true, message: 'User Created Successfuly' });
             })
             .catch(err => {
               res.status(500).json({ err });
@@ -100,8 +100,8 @@ module.exports.login = (req, res) => {
           if (isMatch) {
             // user matched
             console.log('matched!')
-            const { id, username, role, accessTo, functionalities,account_id,name,account_type } = user[0].dataValues;
-            const payload = { id, username, role, accessTo, functionalities,account_id,name,account_type };
+            const { id, username, role, accessTo, functionalities, account_id, name, account_type } = user[0].dataValues;
+            const payload = { id, username, role, accessTo, functionalities, account_id, name, account_type };
 
             jwt.sign(payload, process.env.JWT_SECRET_KEY, {
               expiresIn: 3600
@@ -177,9 +177,9 @@ module.exports.verifyToken = async function (req, res) {
   console.log(authToken)
 
   if (!authToken || !authToken.startsWith("Bearer ")) {
-      console.log(authToken, 'inside');
+    console.log(authToken, 'inside');
     return res.status(401).json({
-      
+
       success: false,
       msg: "Invalid or missing token",
     });
@@ -189,8 +189,8 @@ module.exports.verifyToken = async function (req, res) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    const { id,account_id} = decoded;
-    console.log(id,account_id)
+    const { id, account_id } = decoded;
+    console.log(id, account_id)
 
     const user = await db.User.findOne({
       where: {
@@ -240,7 +240,7 @@ module.exports.storeProcedure = (req, res) => {
     name_of_giver = "",
     in_qty = 0,
     out_qty = 0,
-    date = moment().format("YYYY-MM-DD"), 
+    date = moment().format("YYYY-MM-DD"),
     vibe_user_name = "",
     vibe_item_name = "",
     vibe_item_price = "",
@@ -255,7 +255,7 @@ module.exports.storeProcedure = (req, res) => {
     kitchen_item_qty = 0,
     status = ""
   } = req.body;
-  const {  query_type = "" } =req.query 
+  const { query_type = "" } = req.query
 
   console.log("Received date:", date);
 
@@ -320,7 +320,7 @@ module.exports.storeProcedure = (req, res) => {
     )
     .then((results) => {
       req.results = results;
-      res.json({ success: true, results }); 
+      res.json({ success: true, results });
     })
     .catch((err) => {
       console.error("Error executing procedure:", err);
@@ -513,12 +513,13 @@ module.exports.insertVibe = (req, res) => {
     out_qty = null,
     payment_method = "",
     discount = "",
+    staff_name = ""
   } = req.body;
 
   db.sequelize
     .query(
-      `INSERT INTO new_vibe_table ( menu, item_price, out_qty, payment_method, vibe_discount)
-       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount)`,
+      `INSERT INTO new_vibe_table ( menu, item_price, out_qty, payment_method, vibe_discount, staff_name)
+       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount, :staff_name)`,
       {
         replacements: {
           menu,
@@ -526,6 +527,7 @@ module.exports.insertVibe = (req, res) => {
           out_qty,
           payment_method,
           discount,
+          staff_name
         },
       }
     )
@@ -549,20 +551,22 @@ module.exports.insertVip = (req, res) => {
     item_price = null,
     out_qty = null,
     payment_method = "",
-    discount = ""
+    discount = "",
+    staff_name = ""
   } = req.body;
 
   db.sequelize
     .query(
-      `INSERT INTO new_vip_table ( menu, item_price, out_qty, payment_method, vip_discount)
-       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount)`,
+      `INSERT INTO new_vip_table ( menu, item_price, out_qty, payment_method, vip_discount, staff_name)
+       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount, :staff_name)`,
       {
         replacements: {
           menu,
           item_price,
           out_qty,
           payment_method,
-          discount
+          discount,
+          staff_name
         },
       }
     )
