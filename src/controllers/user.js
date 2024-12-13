@@ -10,6 +10,10 @@ require('dotenv').config();
 const validateRegisterForm = require('../validation/register');
 const validateLoginForm = require('../validation/login');
 
+
+const timeStamp = Date.now()
+const readableDate = new Date(timeStamp)
+const today = readableDate.toLocaleDateString('en-GB')
 // create user
 module.exports.create = (req, res) => {
   const { errors, isValid } = validateRegisterForm(req.body);
@@ -53,7 +57,7 @@ module.exports.create = (req, res) => {
           newUser.password = hash;
           User.create(newUser)
             .then(user => {
-              res.json({success:true, message:'User Created Successfuly' });
+              res.json({ success: true, message: 'User Created Successfuly' });
             })
             .catch(err => {
               res.status(500).json({ err });
@@ -100,8 +104,8 @@ module.exports.login = (req, res) => {
           if (isMatch) {
             // user matched
             console.log('matched!')
-            const { id, username, role, accessTo, functionalities,account_id,name,account_type } = user[0].dataValues;
-            const payload = { id, username, role, accessTo, functionalities,account_id,name,account_type };
+            const { id, username, role, accessTo, functionalities, account_id, name, account_type } = user[0].dataValues;
+            const payload = { id, username, role, accessTo, functionalities, account_id, name, account_type };
 
             jwt.sign(payload, process.env.JWT_SECRET_KEY, {
               expiresIn: 3600
@@ -177,9 +181,9 @@ module.exports.verifyToken = async function (req, res) {
   console.log(authToken)
 
   if (!authToken || !authToken.startsWith("Bearer ")) {
-      console.log(authToken, 'inside');
+    console.log(authToken, 'inside');
     return res.status(401).json({
-      
+
       success: false,
       msg: "Invalid or missing token",
     });
@@ -189,8 +193,8 @@ module.exports.verifyToken = async function (req, res) {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
-    const { id,account_id} = decoded;
-    console.log(id,account_id)
+    const { id, account_id } = decoded;
+    console.log(id, account_id)
 
     const user = await db.User.findOne({
       where: {
@@ -227,6 +231,7 @@ module.exports.verifyToken = async function (req, res) {
 
 
 module.exports.storeProcedure = (req, res) => {
+  console.log(req.bod, "body")
   const {
     id = 0,
     // query_type = "",
@@ -240,7 +245,7 @@ module.exports.storeProcedure = (req, res) => {
     name_of_giver = "",
     in_qty = 0,
     out_qty = 0,
-    date = moment().format("YYYY-MM-DD"), 
+    date = moment().format("YYYY-MM-DD"),
     vibe_user_name = "",
     vibe_item_name = "",
     vibe_item_price = "",
@@ -249,15 +254,19 @@ module.exports.storeProcedure = (req, res) => {
     vip_item_name = "",
     vip_item_price = "",
     vip_item_qty = 0,
+    reception_user_name = "",
+    reception_item_name = "",
+    reception_item_price = "",
+    reception_item_qty = "",
     kitchen_user_name = "",
     kitchen_item_name = "",
     kitchen_item_price = "",
     kitchen_item_qty = 0,
     status = ""
   } = req.body;
-  const {  query_type = "" } =req.query 
+  const { query_type = "" } = req.query
 
-  console.log("Received date:", date);
+  console.log("Received date:", date, req.body);
 
   db.sequelize
     .query(
@@ -282,6 +291,10 @@ module.exports.storeProcedure = (req, res) => {
         :vip_item_name,
         :vip_item_price,
         :vip_item_qty,
+        :reception_user_name,
+        :reception_item_name,
+        :reception_item_price,
+        :reception_item_qty,
         :kitchen_user_name,
         :kitchen_item_name,
         :kitchen_item_price,
@@ -310,6 +323,10 @@ module.exports.storeProcedure = (req, res) => {
           vip_item_name,
           vip_item_price,
           vip_item_qty,
+          reception_user_name,
+          reception_item_name,
+          reception_item_price,
+          reception_item_qty,
           kitchen_user_name,
           kitchen_item_name,
           kitchen_item_price,
@@ -320,7 +337,7 @@ module.exports.storeProcedure = (req, res) => {
     )
     .then((results) => {
       req.results = results;
-      res.json({ success: true, results }); 
+      res.json({ success: true, results });
     })
     .catch((err) => {
       console.error("Error executing procedure:", err);
@@ -389,6 +406,7 @@ module.exports.getVibe = (req, res) => {
   db.sequelize
     .query("SELECT * FROM vibe_table", { type: db.Sequelize.QueryTypes.SELECT })
     .then((results) => {
+      console.log(results, "get vibe stock")
       res.status(200).json({
         success: true,
         data: results
@@ -408,6 +426,7 @@ module.exports.getVip = (req, res) => {
   db.sequelize
     .query("SELECT * FROM vip_table", { type: db.Sequelize.QueryTypes.SELECT })
     .then((results) => {
+      console.log(results, "get vip stock")
       res.status(200).json({
         success: true,
         data: results
@@ -507,24 +526,29 @@ module.exports.getMenu = (req, res) => {
 
 
 module.exports.insertVibe = (req, res) => {
+  console.log(req.body, "from vibs")
   const {
     menu = "",
     item_price = null,
     out_qty = null,
     payment_method = "",
     discount = "",
+    staff = "",
+    date
   } = req.body;
 
   db.sequelize
     .query(
-      `INSERT INTO new_vibe_table ( menu, item_price, out_qty, payment_method, vibe_discount)
-       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount)`,
+      `INSERT INTO new_vibe_table ( menu, item_price, out_qty, payment_method, staff, date, vibe_discount)
+       VALUES ( :menu, :item_price, :out_qty, :payment_method, :staff, :date, :discount)`,
       {
         replacements: {
           menu,
           item_price,
           out_qty,
           payment_method,
+          staff,
+          date,
           discount,
         },
       }
@@ -544,25 +568,29 @@ module.exports.insertVibe = (req, res) => {
 
 
 module.exports.insertVip = (req, res) => {
+  console.log(today, "this is todays date", req.body)
   const {
     menu = "",
     item_price = null,
     out_qty = null,
     payment_method = "",
-    discount = ""
+    discount = "",
+    staff = ""
   } = req.body;
 
   db.sequelize
     .query(
-      `INSERT INTO new_vip_table ( menu, item_price, out_qty, payment_method, vip_discount)
-       VALUES ( :menu, :item_price, :out_qty, :payment_method, :discount)`,
+      `INSERT INTO new_vip_table ( date, menu, item_price, out_qty, payment_method, vip_discount, staff)
+       VALUES ( :today, :menu, :item_price, :out_qty, :payment_method, :discount, :staff)`,
       {
         replacements: {
+          today,
           menu,
           item_price,
           out_qty,
           payment_method,
-          discount
+          discount,
+          staff
         },
       }
     )
@@ -572,6 +600,49 @@ module.exports.insertVip = (req, res) => {
     .catch((err) => {
       console.error("Error inserting VIP record:", err);
       res.status(500).json({ error: "Database error", details: err });
+    });
+};
+
+module.exports.insertReception = (req, res) => {
+  console.log(req.body, "reception")
+  const {
+    menu = "",
+    item_price = null,
+    out_qty = null,
+    payment_method = "",
+    discount = "",
+    staff = ""
+  } = req.body;
+  db.sequelize
+    .query(
+      `INSERT INTO new_reception_table ( date, reception_item_name, reception_item_price, reception_item_qty, payment_method, reception_discount, reception_user_name)
+       VALUES ( "${today}", "${menu}", "${item_price}", "${out_qty}", "${payment_method}", "${discount}", "${staff}")`
+    )
+    .then((results) => {
+      res.json({ success: true, message: "Reception record inserted successfully", results });
+    })
+    .catch((err) => {
+      console.error("Error inserting reception record:", err);
+      res.status(500).json({ error: "Database error", details: err });
+    });
+}
+
+module.exports.getOutReception = (req, res) => {
+  db.sequelize
+    .query("SELECT * FROM new_reception_table", { type: db.Sequelize.QueryTypes.SELECT })
+    .then((results) => {
+      res.status(200).json({
+        success: true,
+        data: results,
+      });
+    })
+    .catch((err) => {
+      console.error("Error fetching in_stock records:", err);
+      res.status(500).json({
+        success: false,
+        message: "Failed to retrieve in_stock records",
+        error: err,
+      });
     });
 };
 

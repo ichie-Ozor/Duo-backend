@@ -14,6 +14,8 @@ const { create, login, findAllUsers,
   getOutVip,
   getOutVibe,
   getMenu,
+  insertReception,
+  getOutReception,
 } = require('../controllers/user');
 
 module.exports = (app) => {
@@ -65,7 +67,7 @@ module.exports = (app) => {
     passport.authenticate("jwt", { session: false }),
     verifyToken
   );
-  
+
   app.post(
     '/stores', storeProcedure
   );
@@ -104,7 +106,9 @@ module.exports = (app) => {
   app.post(
     '/insert-vip', insertVip
   );
-   app.get("/get/out-vip", getOutVip);
-   app.get("/get/out-vibe", getOutVibe);
-   app.get("/get/menu", getMenu);
+  app.post('/insert-reception', insertReception)
+  app.get("/get/out-reception", getOutReception)
+  app.get("/get/out-vip", getOutVip);
+  app.get("/get/out-vibe", getOutVibe);
+  app.get("/get/menu", getMenu);
 };

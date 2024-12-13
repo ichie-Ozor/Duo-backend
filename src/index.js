@@ -37,7 +37,7 @@ require("./config/passport")(passport);
 app.get("/", (req, res) => res.send("Hello my World"));
 
 require("./routes/user.js")(app);
-// require("./routes/create_user.js")(app);
+require("./routes/report.js")(app);
 
 // any routes not specified get sent here
 app.all("/*", function (req, res) {
