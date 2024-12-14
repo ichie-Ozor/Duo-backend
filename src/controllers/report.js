@@ -94,7 +94,10 @@ module.exports.getTodayReport = (req, res) => {
         pos = null,
         room = null,
         damage = null,
-        transfer = null
+        transfer = null,
+        total = null,
+        amt = null,
+        oweing = null
     } = req.body
     db.sequelize.query(
         `CALL report(
@@ -106,7 +109,10 @@ module.exports.getTodayReport = (req, res) => {
         :transfer,
         :ceo,
         :damage,
-        :room        
+        :room,
+        :amt,
+        :oweing,
+        :total        
         )`,
         {
             replacements: {
@@ -118,7 +124,10 @@ module.exports.getTodayReport = (req, res) => {
                 transfer,
                 ceo,
                 damage,
-                room
+                room,
+                amt,
+                oweing,
+                total
             }
         }
     ).then((result) => {
