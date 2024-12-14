@@ -69,7 +69,7 @@ module.exports.create = (req, res) => {
 };
 
 module.exports.login = (req, res) => {
-  console.log(req.body, "bbbbbbbbbb")
+  // console.log(req.body, "bbbbbbbbbb")
   const { errors, isValid } = validateLoginForm(req.body);
 
   // check validation
@@ -88,7 +88,7 @@ module.exports.login = (req, res) => {
     }
   })
     .then(user => {
-      console.log(user, "gggggggg")
+      // console.log(user, "gggggggg")
       //check for user
       if (!user.length) {
         errors.username = 'User not found!';

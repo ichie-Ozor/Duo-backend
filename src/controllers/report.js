@@ -18,7 +18,10 @@ module.exports.createReport = (req, res) => {
             pos,
             room,
             damage,
-            transfer
+            transfer,
+            total,
+            amt,
+            oweing
         } = element
         db.sequelize
             .query(`CALL report(
@@ -30,7 +33,10 @@ module.exports.createReport = (req, res) => {
         :transfer,
         :ceo,
         :damage,
-        :room        
+        :room,
+        :total,
+        :amt,
+        :oweing        
         )`,
                 {
                     replacements: {
@@ -42,7 +48,10 @@ module.exports.createReport = (req, res) => {
                         transfer,
                         ceo,
                         damage,
-                        room
+                        room,
+                        total,
+                        amt,
+                        oweing
                     }
                 }
             ).then((result) => {

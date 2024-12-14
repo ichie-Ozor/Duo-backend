@@ -25,9 +25,9 @@ function validateRegisterForm(data) {
     errors.name = 'First Name field is required';
   }
 
-  if (Validator.isEmpty(data.username)) {
-    errors.usernamename = 'Last Name field is required';
-  }
+  // if (Validator.isEmpty(data.username)) {
+  //   errors.usernamename = 'Last Name field is required';
+  // }
 
   if (Validator.isEmpty(data.role)) {
     errors.role = 'Role field is required';
