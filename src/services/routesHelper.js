@@ -15,3 +15,4 @@ const allowOnly = function (accessLevel, callback) {
 }
 
 module.exports = { allowOnly }
+// this is a function
