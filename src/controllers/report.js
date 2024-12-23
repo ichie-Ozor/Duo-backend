@@ -1,5 +1,7 @@
 const db = require('../modals');
 const moment = require('moment')
+const { QueryTypes } = require('sequelize');
+const { mergeByName } = require('../util/helper');
 
 module.exports.createReport = (req, res) => {
     console.log(req.body, "body")
@@ -82,69 +84,129 @@ module.exports.createReport = (req, res) => {
     }
 }
 
-module.exports.getAllReport = (req, res) => { }
+module.exports.getAllReport = (req, res) => {
+    const query_type = "getReport"
+    const { from, to } = req.query
+    db.sequelize
+        .query(
+            `SELECT * FROM report WHERE date >= :from AND date <= :to`,
+            {
+                replacements: { from, to },
+                type: QueryTypes.SELECT
+            }
+        )
+        .then((resp) => {
+            const response = mergeByName(resp)
+            res.status(200).json({
+                success: true,
+                response
+            })
+        }).catch((err) => {
+            res.status(500).json({
+                success: false,
+                message: `failed to get result ${err.message}`,
+                err
+            })
+        })
+}
+
+
 module.exports.getTodayReport = (req, res) => {
     console.log(req.url, " param")
     const query_type = "getTodayReport"
     const date = moment(new Date()).format("YYYY-MM-DD")
-    const {
-        cash = null,
-        ceo = null,
-        name = null,
-        pos = null,
-        room = null,
-        damage = null,
-        transfer = null,
-        total = null,
-        amt = null,
-        oweing = null
-    } = req.body
-    db.sequelize.query(
-        `CALL report(
-        :query_type,
-        :date,
-        :name,
-        :cash,
-        :pos,
-        :transfer,
-        :ceo,
-        :damage,
-        :room,
-        :amt,
-        :oweing,
-        :total        
-        )`,
-        {
-            replacements: {
-                query_type,
-                date,
-                name,
-                cash,
-                pos,
-                transfer,
-                ceo,
-                damage,
-                room,
-                amt,
-                oweing,
-                total
+    // const {
+    //     cash = null,
+    //     ceo = null,
+    //     name = null,
+    //     pos = null,
+    //     room = null,
+    //     damage = null,
+    //     transfer = null,
+    //     total = null,
+    //     amt = null,
+    //     oweing = null
+    // } = req.body
+    // db.sequelize.query(
+    //     `CALL report(
+    //     :query_type,
+    //     :date,
+    //     :name,
+    //     :cash,
+    //     :pos,
+    //     :transfer,
+    //     :ceo,
+    //     :damage,
+    //     :room,
+    //     :amt,
+    //     :oweing,
+    //     :total        
+    //     )`,
+    //     {
+    //         replacements: {
+    //             query_type,
+    //             date,
+    //             name,
+    //             cash,
+    //             pos,
+    //             transfer,
+    //             ceo,
+    //             damage,
+    //             room,
+    //             amt,
+    //             oweing,
+    //             total
+    //         }
+    //     }
+    db.sequelize
+        .query(
+            `SELECT * FROM report WHERE date = :date`,
+            {
+                replacements: { date },
+                type: db.sequelize.QueryTypes.SELECT
             }
-        }
-    ).then((result) => {
-        console.log(result, "result")
-        res.status(200).json({
-            success: true,
-            result
+        ).then((results) => {
+            console.log(results, "result")
+            //////////////////////////////
+            // const mergeByName = (array) => {
+            //     const result = {};
+
+            //     array.forEach((obj) => {
+            //         const { name, ...rest } = obj;
+
+            //         if (!result[name]) {
+            //             // Initialize if the name does not exist
+            //             result[name] = { ...rest, name };
+            //         } else {
+            //             // Add values if the name exists
+            //             for (const key in rest) {
+            //                 if (key !== "date" && key !== "id" && !isNaN(Number(rest[key]))) {
+            //                     result[name][key] = (Number(result[name][key]) || 0) + Number(rest[key]);
+            //                 }
+            //             }
+            //         }
+            //     });
+
+            //     return Object.values(result);
+            // };
+
+            const response = mergeByName(results);
+            console.log(response, "response", typeof response);
+            // //////////////////////////
+            res.status(200).json({
+                success: true,
+                response
+            })
+        }).catch((err) => {
+            res.status(500).json({
+                success: false,
+                message: `failed to get result ${err.message}`,
+                err
+            })
         })
-    }).catch((err) => {
-        res.status(500).json({
-            success: false,
-            message: `failed to get result ${err.message}`,
-            err
-        })
-    })
 }
-module.exports.getOneReport = (req, res) => { }
+
+
 module.exports.getSaleStaff = (req, res) => {
     db.sequelize
         .query(
@@ -186,3 +248,8 @@ module.exports.getSaleStaff = (req, res) => {
 //             })
 //         })
 // }
+
+module.exports.getOneReport = (req, res) => {
+
+
+}
