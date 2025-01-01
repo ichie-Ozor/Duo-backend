@@ -11,20 +11,23 @@ module.exports.createReport = (req, res) => {
     // Object.keys(data).forEach(key => {
     data.forEach(element => {
         console.log(element, 'LLLSLSLS')
+
         const {
             query_type = "create_report",
-            date = moment(new Date()).format("YYYY-MM-DD"),
+            date = "",
             cash,
             ceo,
             name,
             pos,
             room,
+            owe,
             damage,
             transfer,
             total,
             amt,
             oweing
         } = element
+        const queryDate = date == "" ? moment(new Date()).format("YYYY-MM-DD") : date
         db.sequelize
             .query(`CALL report(
         :query_type,
@@ -36,6 +39,7 @@ module.exports.createReport = (req, res) => {
         :ceo,
         :damage,
         :room,
+        :owe,
         :total,
         :amt,
         :oweing        
@@ -43,7 +47,7 @@ module.exports.createReport = (req, res) => {
                 {
                     replacements: {
                         query_type,
-                        date,
+                        date: queryDate,
                         name,
                         cash,
                         pos,
@@ -51,6 +55,7 @@ module.exports.createReport = (req, res) => {
                         ceo,
                         damage,
                         room,
+                        owe,
                         total,
                         amt,
                         oweing
