@@ -28,14 +28,15 @@ module.exports = (app) => {
   app.post('/users/login', login);
 
   //retrieve all users
-  app.get(
-    '/users',
-    passport.authenticate('jwt', {
-      session: false
-    }),
-    allowOnly(config.accessLevels.admin, findAllUsers)
-  );
+  // app.get(
+  //   '/users',
+  //   passport.authenticate('jwt', {
+  //     session: false
+  //   }),
+  //   allowOnly(config.accessLevels.admin, findAllUsers)
+  // );
 
+  app.get('/users', findAllUsers)
   // retrieve user by id
   app.get(
     '/users/:userId',

@@ -131,7 +131,11 @@ module.exports.login = (req, res) => {
 module.exports.findAllUsers = (req, res) => {
   User.findAll()
     .then(user => {
-      res.json({ user });
+      res.status(200).json({
+        user,
+        success: true,
+        message: "All staffs fetched successfully"
+      });
     })
     .catch(err => res.status(500).json({ err }));
 };

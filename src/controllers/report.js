@@ -10,7 +10,7 @@ module.exports.createReport = (req, res) => {
     const data = req.body
     // Object.keys(data).forEach(key => {
     data.forEach(element => {
-        console.log(element, 'LLLSLSLS')
+        console.log(element)
 
         const {
             query_type = "create_report",
@@ -62,6 +62,7 @@ module.exports.createReport = (req, res) => {
                     }
                 }
             ).then((result) => {
+                console.log(result, "report backend")
                 successReport.push({
                     message: "saved successfully",
                     result
@@ -102,6 +103,7 @@ module.exports.getAllReport = (req, res) => {
         )
         .then((resp) => {
             const response = mergeByName(resp)
+            console.log(resp, "report backend")
             res.status(200).json({
                 success: true,
                 response
@@ -231,6 +233,8 @@ module.exports.getSaleStaff = (req, res) => {
             })
         })
 }
+
+
 // module.exports.getSaleStaff = (req, res) => {
 //     db.sequelize
 //         .query(
@@ -254,7 +258,37 @@ module.exports.getSaleStaff = (req, res) => {
 //         })
 // }
 
-module.exports.getOneReport = (req, res) => {
+module.exports.getOneReport = (req, res) => { }
 
+module.exports.deleteStaff = async (req, res) => {
+    const { userId } = req.params
 
+    if (!userId) {
+        return res.status(400).json({
+            success: false,
+            message: "You are yet to supply the id and name of the staff to be deleted"
+        });
+    }
+    try {
+        console.log(db.sequelize.models.User, "sequalize")
+        const result = await db.sequelize.models.User.destroy({
+            where: { id: userId }
+        });
+        if (result === 0) {
+            return res.status(404).json({
+                success: false,
+                message: "Staff not found"
+            });
+        }
+        res.status(200).json({
+            success: true,
+            message: "Staff deleted successfully"
+        });
+    } catch (err) {
+        console.error("Error trying to delete staff", err);
+        res.status(500).json({
+            success: false,
+            message: "Staff could not be deleted"
+        })
+    }
 }
